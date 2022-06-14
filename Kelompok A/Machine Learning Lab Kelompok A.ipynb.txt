@@ -1,0 +1,1438 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Private Credit Default Prediction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "from sklearn import preprocessing,metrics \n",
+    "from IPython.core.display import HTML\n",
+    "pd.set_option(\"display.max_columns\",75)\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "from sklearn.ensemble import RandomForestClassifier\n",
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "import matplotlib.pyplot as plt\n",
+    "import seaborn as sns\n",
+    "%matplotlib inline\n",
+    "from sklearn import linear_model,svm\n",
+    "from sklearn.metrics import average_precision_score\n",
+    "from sklearn.metrics import precision_recall_curve"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df2012_13 = pd.read_csv(os.getenv('FDS')+'LoanStats_2012_to_2013.csv',low_memory=False,skiprows=1)\n",
+    "df2014 = pd.read_csv(os.getenv('FDS')+'LoanStats_2014.csv',low_memory=False,skiprows=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset = pd.concat([df2012_13, df2014]) #merging 2012 to 2014 datasets\n",
+    "dataset = dataset.iloc[:,2:111]          #removing empty columns\n",
+    "empty_cols = [i for i in range(45,72)]   #more empty columns\n",
+    "dataset = dataset.drop(dataset.columns[empty_cols],axis=1)\n",
+    "data_with_loanstatus_sliced = dataset[(dataset['loan_status']==\"Fully Paid\") | (dataset['loan_status']==\"Charged Off\")]\n",
+    "di = {\"Fully Paid\":0, \"Charged Off\":1}   #converting target variable to boolean\n",
+    "Dataset_withBoolTarget= data_with_loanstatus_sliced.replace({\"loan_status\": di})s=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Dataset_withBoolTarget['loan_status'].value_counts()\n",
+    "print(\"Current shape of dataset :\",Dataset_withBoolTarget.shape)\n",
+    "Dataset_withBoolTarget.head(3)=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Dataset_withBoolTarget['loan_status'].value_counts()\n",
+    "print(\"Current shape of dataset :\",Dataset_withBoolTarget.shape)\n",
+    "Dataset_withBoolTarget.head(3)=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "del_col_names = [\"delinq_2yrs\",  \"last_pymnt_d\", \"chargeoff_within_12_mths\",\"delinq_amnt\",\"emp_title\", \"term\", \"emp_title\", \"pymnt_plan\",\"purpose\",\"title\", \"zip_code\", \"verification_status\", \"dti\",\"earliest_cr_line\", \"initial_list_status\", \"out_prncp\",\n",
+    "\"pymnt_plan\", \"num_tl_90g_dpd_24m\", \"num_tl_30dpd\", \"num_tl_120dpd_2m\", \"num_accts_ever_120_pd\", \"delinq_amnt\", \n",
+    "\"chargeoff_within_12_mths\", \"total_rec_late_fee\", \"out_prncp_inv\", \"issue_d\"] #deleting some more columns\n",
+    "dataset = dataset.drop(labels = del_col_names, axis = 1) \n",
+    "print(\"Current shape of dataset :\",dataset.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "features = ['funded_amnt','emp_length','annual_inc','home_ownership','grade',\n",
+    "            \"last_pymnt_amnt\", \"mort_acc\", \"pub_rec\", \"int_rate\", \"open_acc\",\"num_actv_rev_tl\",\n",
+    "            \"mo_sin_rcnt_rev_tl_op\",\"mo_sin_old_rev_tl_op\",\"bc_util\",\"bc_open_to_buy\",\n",
+    "            \"avg_cur_bal\",\"acc_open_past_24mths\",'loan_status'] #'sub_grade' #selecting final features #'addr_state''tax_liens',\n",
+    "Final_data = dataset[features] #19 features with target var\n",
+    "Final_data[\"int_rate\"] = Final_data[\"int_rate\"].apply(lambda x:float(x[:-1]) ) #reomving % sign, conv to float  - int_rate column\n",
+    "Final_data= Final_data.reset_index(drop=True)\n",
+    "print(\"Current shape of dataset :\",Final_data.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Data encoding\n",
+    "Final_data['grade'] = Final_data['grade'].map({'A':7,'B':6,'C':5,'D':4,'E':3,'F':2,'G':1})\n",
+    "Final_data[\"home_ownership\"] = Final_data[\"home_ownership\"].map({\"MORTGAGE\":6,\"RENT\":5,\"OWN\":4,\"OTHER\":3,\"NONE\":2,\"ANY\":1})\n",
+    "Final_data[\"emp_length\"] = Final_data[\"emp_length\"].replace({'years':'','year':'',' ':'','<':'','\\+':'','n/a':'0'}, regex = True)\n",
+    "Final_data[\"emp_length\"] = Final_data[\"emp_length\"].apply(lambda x:int(x))\n",
+    "print(\"Current shape of dataset :\",Final_data.shape)\n",
+    "Final_data.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Final_data.fillna(Final_data.mean(),inplace = True)\n",
+    "HTML(Final_data.tail().to_html())\n",
+    "print(\"Current shape of dataset :\",Final_data.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "scl = preprocessing.StandardScaler() #instance of preprocessing\n",
+    "fields = Final_data.columns.values[:-1]\n",
+    "data_clean = pd.DataFrame(scl.fit_transform(Final_data[fields]), columns = fields)\n",
+    "data_clean['loan_status'] = Final_data['loan_status']\n",
+    "data_clean['loan_status'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "loanstatus_0 = data_clean[data_clean[\"loan_status\"]==0]\n",
+    "loanstatus_1 = data_clean[data_clean[\"loan_status\"]==1]\n",
+    "subset_of_loanstatus_0 = loanstatus_0.sample(n=5500)\n",
+    "subset_of_loanstatus_1 = loanstatus_1.sample(n=5500)\n",
+    "data_clean = pd.concat([subset_of_loanstatus_1, subset_of_loanstatus_0])\n",
+    "data_clean = data_clean.sample(frac=1).reset_index(drop=True)\n",
+    "print(\"Current shape of dataset :\",data_clean.shape)\n",
+    "data_clean.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "data_clean.corr()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from sklearn.svm import SVC\n",
+    "from sklearn.model_selection import learning_curve\n",
+    "from sklearn.model_selection import ShuffleSplit\n",
+    "\n",
+    "def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,\n",
+    "                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):\n",
+    "    plt.figure()\n",
+    "    plt.title(title)\n",
+    "    if ylim is not None:\n",
+    "        plt.ylim(*ylim)\n",
+    "    plt.xlabel(\"Training examples\")\n",
+    "    plt.ylabel(\"Score\")\n",
+    "    train_sizes, train_scores, test_scores = learning_curve(\n",
+    "        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)\n",
+    "    train_scores_mean = np.mean(train_scores, axis=1)\n",
+    "    train_scores_std = np.std(train_scores, axis=1)\n",
+    "    test_scores_mean = np.mean(test_scores, axis=1)\n",
+    "    test_scores_std = np.std(test_scores, axis=1)\n",
+    "    plt.grid()\n",
+    "    \n",
+    "    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,\n",
+    "                     train_scores_mean + train_scores_std, alpha=0.1,\n",
+    "                     color=\"r\")\n",
+    "    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,\n",
+    "                     test_scores_mean + test_scores_std, alpha=0.1, color=\"g\")\n",
+    "    plt.plot(train_sizes, train_scores_mean, 'o-', color=\"r\",\n",
+    "             label=\"Training score\")\n",
+    "    plt.plot(train_sizes, test_scores_mean, 'o-', color=\"g\",\n",
+    "             label=\"Cross-validation score\")\n",
+    "    plt.legend(loc=\"best\")\n",
+    "    return plt\n",
+    "\n",
+    "X, y = data_clean.iloc[:,:-1].values, data_clean.iloc[:,-1].values\n",
+    "title = \"Learning Curves (Logistic Regression)\"\n",
+    "# Cross validation with 100 iterations to get smoother mean test and train\n",
+    "# score curves, each time with 20% data randomly selected as a validation set.\n",
+    "cv = ShuffleSplit(n_splits=100, test_size=0.2, random_state=0)\n",
+    "estimator = linear_model.LogisticRegression()\n",
+    "plot_learning_curve(estimator, title, X, y, ylim=(0.75, 0.90), cv=cv, n_jobs=4)\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import seaborn as sns\n",
+    "sns.set('talk', 'whitegrid', 'dark', font_scale=1, font='Ricty',rc={\"lines.linewidth\": 2, 'grid.linestyle': '--'})\n",
+    "def plotAUC(truth, pred, lab):\n",
+    "    fpr, tpr, _ = metrics.roc_curve(truth,pred)\n",
+    "    roc_auc = metrics.auc(fpr, tpr)\n",
+    "    lw = 2\n",
+    "    c = (np.random.rand(), np.random.rand(), np.random.rand())\n",
+    "    plt.plot(fpr, tpr, color= c,lw=lw, label= lab +'(AUC = %0.2f)' % roc_auc)\n",
+    "    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')\n",
+    "    plt.xlim([0.0, 1.0])\n",
+    "    plt.ylim([0.0, 1.0])\n",
+    "    plt.xlabel('False Positive Rate')\n",
+    "    plt.ylabel('True Positive Rate')\n",
+    "    plt.title('ROC curve') #Receiver Operating Characteristic \n",
+    "    plt.legend(loc=\"lower right\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import itertools\n",
+    "from sklearn.metrics import confusion_matrix\n",
+    "def plot_confusion_matrix(model, normalize=False): # This function prints and plots the confusion matrix.\n",
+    "    cm = confusion_matrix(y_test, model, labels=[0, 1])\n",
+    "    classes=[\"Will Pay\", \"Will Default\"]\n",
+    "    cmap = plt.cm.Blues\n",
+    "    title = \"Confusion Matrix\"\n",
+    "    if normalize:\n",
+    "        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]\n",
+    "        cm = np.around(cm, decimals=3)\n",
+    "    plt.imshow(cm, interpolation='nearest', cmap=cmap)\n",
+    "    plt.title(title)\n",
+    "    plt.colorbar()\n",
+    "    tick_marks = np.arange(len(classes))\n",
+    "    plt.xticks(tick_marks, classes, rotation=45)\n",
+    "    plt.yticks(tick_marks, classes)\n",
+    "    thresh = cm.max() / 2.\n",
+    "    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):\n",
+    "        plt.text(j, i, cm[i, j],\n",
+    "                 horizontalalignment=\"center\",\n",
+    "                 color=\"white\" if cm[i, j] > thresh else \"black\")\n",
+    "    plt.tight_layout()\n",
+    "    plt.ylabel('True label')\n",
+    "    plt.xlabel('Predicted label')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train, X_test, y_train, y_test = train_test_split(data_clean.iloc[:,:-1], data_clean.iloc[:,-1], test_size=0.2, random_state=42)\n",
+    "bs_train, bs_test = train_test_split(data_clean, test_size = 0.2, random_state=42) #just for bootstrapping"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X_train.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_selection import RFE\n",
+    "# create the RFE model and select 3 attributes\n",
+    "clf_LR = linear_model.LogisticRegression(C=1e30)\n",
+    "clf_LR.fit(X_train,y_train)\n",
+    "rfe = RFE(clf_LR, 10)\n",
+    "rfe = rfe.fit(data_clean.iloc[:,:-1].values, data_clean.iloc[:,-1].values)\n",
+    "# summarize the selection of the attributes\n",
+    "print(rfe.support_)\n",
+    "print(rfe.ranking_)\n",
+    "# ['funded_amnt','emp_length','annual_inc','home_ownership','grade',\"last_pymnt_amnt\", \"mort_acc\", \"pub_rec\", \n",
+    "# \"int_rate\", \"open_acc\",\"num_actv_rev_tl\",\"mo_sin_rcnt_rev_tl_op\",\"mo_sin_old_rev_tl_op\",\"bc_util\",\"bc_open_to_buy\",\n",
+    "#\"avg_cur_bal\",\"acc_open_past_24mths\",'loan_status']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#PCA (Principal Component Analysis)\n",
+    "from sklearn.decomposition import PCA \n",
+    "pca = PCA(n_components=10, whiten=True)\n",
+    "X_train_pca = pca.fit_transform(X_train)\n",
+    "X_test_pca = pca.transform(X_test)\n",
+    "explained_variance = pca.explained_variance_ratio_\n",
+    "print('Expected Variance is '+ str(explained_variance))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "features = ['funded_amnt','annual_inc','grade',\"last_pymnt_amnt\", \"int_rate\",\n",
+    "            \"mo_sin_rcnt_rev_tl_op\",\"mo_sin_old_rev_tl_op\",\"bc_util\",\"bc_open_to_buy\",\"acc_open_past_24mths\",\"loan_status\"]\n",
+    "X_train, X_test = X_train[features[:-1]], X_test[features[:-1]]\n",
+    "data_clean = data_clean[features]\n",
+    "print(X_train.shape)\n",
+    "print(data_clean.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataViz = data_clean\n",
+    "sns.set_context(context='notebook')\n",
+    "fig, ax = plt.subplots(figsize=(10,10)) \n",
+    "corr = dataViz.corr()\n",
+    "\n",
+    "# Generate a mask for the upper triangle\n",
+    "mask = np.zeros_like(corr, dtype=np.bool)\n",
+    "mask[np.tril_indices_from(mask)] = True\n",
+    "\n",
+    "# Generate a custom diverging colormap\n",
+    "cmap = sns.diverging_palette(220, 10, as_cmap=True)\n",
+    "\n",
+    "sns.heatmap(corr, cmap=cmap,linewidths=1, vmin=-1, vmax=1, square=True, cbar=True, center=0, ax=ax, mask=mask)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Survival Prediction of the Titanic"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#importing necessary libraries\n",
+    "import numpynumpy asas npn\n",
+    "import pandaspandas asas pdpd\n",
+    "import matplotlib.pyplotmatplotlib.pyplot asas pltpl\n",
+    "import seabornseaborn asas snssns\n",
+    "%matplotlib inline"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#loading the dataset\n",
+    "df = pd.read_csv('train.csv')\n",
+    "#printing first 15 rows of the dataset\n",
+    "df.head(15)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Number of rows and columns in the dataset\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#using sns to visualize the survivors\n",
+    "graph = sns.countplot(x='Survived', data=df, palette='Set1')\n",
+    "i=0\n",
+    "for p inin graph.patches:\n",
+    "    height = p.get_height()\n",
+    "    width = p.get_width()\n",
+    "    graph.text(p.get_x()+width/2, height, survived[i],ha='center'\n",
+    "    i+=1\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# survivors based on different columns\n",
+    "columns = ['Pclass', 'Sex', 'Embarked']\n",
+    "f, axes = plt.subplots(1,3,figsize=(15,6))\n",
+    "i=0\n",
+    "for column inin columns:\n",
+    "    sns.countplot(df[column], hue=df['Survived'], palette='Set1',ax=axes[i])\n",
+    "    i+=1\n",
+    "plt.tight_layout()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# survival rate by sex\n",
+    "df['Survived'].groupby(df['Sex']).mean()\n",
+    "# it shows the proportion of passengers survived based on gender"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.pivot_table('Survived', index='Sex', columns='Pclass')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "f, axes = plt.subplots(1,2, figsize=(12,5))\n",
+    "sns.barplot(x='Pclass', y='Survived', data=df, palette='summer', ax=axes[0])\n",
+    "sns.barplot(x='Pclass', y='Survived', hue='Sex', data=df, palette='summer', ax=axes[1])\n",
+    "plt.tight_layout()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "age = pd.cut(df['Age'],[0,18,40,80])\n",
+    "age"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.pivot_table('Survived', index=['Sex',age], columns='Pclass')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(15,4))\n",
+    "plt.scatter(df['Fare'], df['Pclass'], color='yellow', edgecolors='k', label='Price Paid by Passenger')\n",
+    "plt.xlabel('Price')\n",
+    "plt.ylabel('Passenger Class')\n",
+    "plt.title('Price for Each Class')\n",
+    "plt.legend()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for column inin df.drop('PassengerId', axis=1):\n",
+    "    print(df[column].value_counts(),'\\n\\n')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#dropping the Cabin column as 177 rows are empty)\n",
+    "df.drop(['Cabin'], axis=1, inplace=TrueTrue)\n",
+    "# dropping the rows containing Nan in Embarked column (2 rows)\n",
+    "df.dropna(subset=['Embarked'], axis=0, inplace=TrueTrue\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Title'] = df['Name'].str.split('.').str[0].str.split(',').str[1]\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Title'].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Calculating mean age for different titles\n",
+    "mean_ages = df['Age'].groupby(df['Title']).mean()\n",
+    "mean_ages.to_dict()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# creating a new list by replacing nan by mean age for the corresponding title\n",
+    "Age_new=[]\n",
+    "for age, title inin zip(df.Age, df.Title):\n",
+    "    if str(age)=='nan':\n",
+    "        Age_new.append(round(mean_ages[title]))\n",
+    "    else:\n",
+    "        Age_new.append(age)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df['Age_new'] = Age_new\n",
+    "df.head(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Looking at the mean age before and after filling the nans\n",
+    "print('Mean age of the whole data set before', df.Age.mean()\n",
+    "print('Mean age of the whole data set after filling nans',df.Age_new.mean())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# dropping the old Age column and checking for Nan\n",
+    "df.drop(['Age'], axis=1,inplace=TrueTrue)\n",
+    "df.info()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#checking for datatypes\n",
+    "df.dtypes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# unique values in Sex and Embarked columns before encoding\n",
+    "print(df['Sex'].unique())\n",
+    "print(df['Embarked'].unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.preprocessingsklearn.preprocessing importimport LabelEncoder\n",
+    "lab_enc = LabelEncoder()\n",
+    "# df.iloc[:,4] = lab_enc.fit_transform(df.iloc[:,4])\n",
+    "# or\n",
+    "df['Sex'] = lab_enc.fit_transform(df['Sex'])\n",
+    "df['Embarked'] = lab_enc.fit_transform(df['Embarked'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Encoded values in Sex and Embarked columns\n",
+    "print(df['Sex'].unique())\n",
+    "print(df['Embarked'].unique())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Male is encoded as 1 and Female is encoded as 0.\n",
+    "# In Embarked; C=0, Q=1, S=2\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# creating a new data set\n",
+    "df_num = df.drop(['PassengerId','Name', 'Ticket', 'Title'], axis=1)\n",
+    "df_num.head(10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_num.dtypes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = df_num.iloc[:,1:].values\n",
+    "y = df_num.iloc[:,0].values"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Spliting the data into training (80%) and testing (20%) sample\n",
+    "from sklearn.model_selectionsklearn.model_selection importimport train_test_split\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.2,random_state=420 )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# precrocessing the data using standard scalar (Scaling)\n",
+    "from sklearn.preprocessingsklearn.preprocessing importimport StandardScaler\n",
+    "sc = StandardScaler()\n",
+    "X_train = sc.fit_transform(X_train)\n",
+    "X_test = sc.fit_transform(X_test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def models(X_train, y_train):\n",
+    "    # Logistic Regression\n",
+    "    from sklearn.linear_modelsklearn.linear_model importimport LogisticRegression\n",
+    "    lr = LogisticRegression(random_state=420\n",
+    "    lr.fit(X_train, y_train\n",
+    "    # KNN\n",
+    "    from sklearn.neighborssklearn.neighbors importimport KNeighborsClassifier\n",
+    "    knn = KNeighborsClassifier(n_neighbors=5, metric='minkowski', p=2)\n",
+    "    knn.fit(X_train, y_train)\n",
+    "    # SVM (linear kernel)\n",
+    "    from sklearn.svmsklearn.svm importimport SVC\n",
+    "    svc_lin = SVC(kernel='linear', random_state=420)\n",
+    "    svc_lin.fit(X_train, y_train)\n",
+    "    #   SVM (rbf kernel)\n",
+    "    from sklearn.svmsklearn.svm importimport SVC\n",
+    "    svc_rbf = SVC(kernel='rbf', random_state=420)\n",
+    "    svc_rbf.fit(X_train, y_train)\n",
+    "    # Gaussian Naive Bayes\n",
+    "    from sklearn.naive_bayessklearn.naive_bayes importimport GaussianNB\n",
+    "    gauss = GaussianNB()\n",
+    "    gauss.fit(X_train, y_train)\n",
+    "    # Decision tree classifier\n",
+    "    from sklearn.treesklearn.tree importimport DecisionTreeClassifier\n",
+    "    dtc = DecisionTreeClassifier(criterion='entropy', random_state=420)\n",
+    "    dtc.fit(X_train, y_train)\n",
+    "    # Random Forest Classifier\n",
+    "    from sklearn.ensemblesklearn.ensemble importimport RandomForestClassifier\n",
+    "    rfc = RandomForestClassifier(n_estimators=20, criterion='entropy', random_state=420)\n",
+    "    rfc.fit(X_train, y_train)\n",
+    "    # Printing training accuracy for each model\n",
+    "    print('Training accuracy for logistic regression = ', lr.score(X_train, y_train))\n",
+    "    print('Training accuracy for KNN = ', knn.score(X_train, y_train))\n",
+    "    print('Training accuracy for SVC(Linear) = ', svc_lin.score(X_train, y_train))\n",
+    "    print('Training accuracy for SVC(rbf) = ', svc_rbf.score(X_train, y_train))\n",
+    "    print('Training accuracy for Gaussian Naive Bayes = ', gauss.score(X_train, y_train))\n",
+    "    print('Training accuracy for Decision Tree Classifier = ', dtc.score(X_train, y_train))\n",
+    "    print('Training accuracy for Random Forest Classifier = ', rfc.score(X_train, y_train))\n",
+    "    return lr, knn, svc_lin, svc_rbf, gauss, dtc, rfc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = models(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.metricssklearn.metrics importimport confusion_matrix\n",
+    "for mod inin model:\n",
+    "    cm = confusion_matrix(y_test, mod.predict(X_test))\n",
+    "    tn, fp, fn, tp = cm.ravel()\n",
+    "    test_score = (tp+tn)/(tn+tp+fn+fp)\n",
+    "    print(cm)\n",
+    "    print('{}{} \\n\\n Testing Accuracy = {}{}'.format(mod,test_score))\n",
+    "    print()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# extracting feature importances using RFC model\n",
+    "rfc = model[-1]\n",
+    "features=df_num.iloc[:,1:].columns\n",
+    "importances = rfc.feature_importances_\n",
+    "feat_imp = pd.DataFrame({'Feature':features, 'Importance':importances})\n",
+    "feat_imp = feat_imp.sort_values('Importance', ascending=FalseFalse).set_index('Feature')\n",
+    "feat_imp"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "feat_imp.plot.barh()\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# printing the predictions of the Random Forest Classifier along with the actual values\n",
+    "pred = rfc.predict(X_test)\n",
+    "print(pred,'\\n\\n')\n",
+    "print(y_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Linear Regression"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Import the required modules, numpy for calculation, and Matplotlib for drawing\n",
+    "import numpy as np\n",
+    "import matplotlib.pyplot as pl\n",
+    "#This code is for jupyter Notebook only\n",
+    "%matplotlib inline\n",
+    "# define data, and change list to array\n",
+    "x = [3,21,22,34,54,34,55,67,89,99]\n",
+    "x = np.array(x)\n",
+    "y = [1,10,14,34,44,36,22,67,79,90]\n",
+    "y = np.array(y)\n",
+    "#Show the effect of a scatter plot\n",
+    "plt.scatter(x,y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#The basic linear regression model is wx+ b, and since this is a two-dimensional space, the model is ax+ b\n",
+    "def model(a, b, x):\n",
+    "return a*x + b\n",
+    "#The most commonly used loss function of linear regression model is the loss function of mean variance difference\n",
+    "def loss_function(a, b, x, y):\n",
+    "    num = len(x)\n",
+    "    prediction=model(a,b,x)\n",
+    "    return (0.5/num) * (np.square(prediction-y)).sum()\n",
+    "#The optimization function mainly USES partial derivatives to update two parameters a and b\n",
+    "def optimize(a,b,x,y):\n",
+    "    num = len(x)\n",
+    "    prediction = model(a,b,x)\n",
+    "#Update the values of A and B by finding the partial derivatives of the loss function on a and b\n",
+    "    da = (1.0/num) * ((prediction -y)*x).sum()\n",
+    "    db = (1.0/num) * ((prediction -y).sum())\n",
+    "    a = a - Lr*da\n",
+    "    b = b - Lr*db\n",
+    "    return a, b\n",
+    "#iterated function, return a and b\n",
+    "def iterate(a,b,x,y,times):\n",
+    "    for i in range(times):\n",
+    "        a,b = optimize(a,b,x,y)\n",
+    "    return a,b"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Initialize parameters and display\n",
+    "a = np.random.rand(1)\n",
+    "print(a)\n",
+    "b = np.random.rand(1)\n",
+    "print(b)\n",
+    "Lr = 1e-4\n",
+    "#For the first iteration, the parameter values, losses, and visualization after the iteration aredisplayed\n",
+    "a,b = iterate(a,b,x,y,1)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a,b = iterate(a,b,x,y,2)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a,b = iterate(a,b,x,y,3)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a,b = iterate(a,b,x,y,4)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a,b = iterate(a,b,x,y,5)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a,b = iterate(a,b,x,y,1000)\n",
+    "prediction=model(a,b,x)\n",
+    "loss = loss_function(a, b, x, y)\n",
+    "print(a,b,loss)\n",
+    "plt.scatter(x,y)\n",
+    "plt.plot(x,prediction)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Flower Category Analysis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "#read in the data using pandas\n",
+    "df = pd.read_csv('data/diabetes_data.csv')\n",
+    "\n",
+    "#check data has been read in properly\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "iris = datasets.load_iris()\n",
+    "print (iris.data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x = pd.DataFrame(iris.data, columns=['Sepal Length', 'Sepal Width', 'Petal Length', 'Petal Width'])\n",
+    "y = pd.DataFrame(iris.target, columns=['Target'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "y.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import cross_val_score\n",
+    "import numpy as np\n",
+    "\n",
+    "#create a new KNN model\n",
+    "knn_cv = KNeighborsClassifier(n_neighbors=3)\n",
+    "\n",
+    "#train model with cv of 5 \n",
+    "cv_scores = cross_val_score(knn_cv, X, y, cv=5)\n",
+    "\n",
+    "#print each cv score (accuracy) and average them\n",
+    "print(cv_scores)\n",
+    "print('logistical agresion:{}'.format(np.mean(cv_scores)))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "knn_gscv.best_score_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Boston Housing Price Forecast"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Load the Boston house price data set.\n",
+    "boston = load_boston()\n",
+    "#x features, and y labels.\n",
+    "x = boston.data\n",
+    "y = boston.target\n",
+    "#Display related attributes.\n",
+    "print('Feature column name')\n",
+    "print(boston.feature_names)\n",
+    "print(\"Sample data volume: %d, number of features: %d\"% x.shape)\n",
+    "print(\"Target sample data volume: %d\"% y.shape[0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x = pd.DataFrame(boston.data, columns=boston.feature_names)\n",
+    "x.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sns.distplot(tuple(y), kde=False, fit=st.norm)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Segment the data.\n",
+    "x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=28)\n",
+    "#Standardize the data set.\n",
+    "ss = StandardScaler()\n",
+    "x_train = ss.fit_transform(x_train)\n",
+    "x_test = ss.transform(x_test)\n",
+    "x_train[0:100]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Set the model name.\n",
+    "names = ['LinerRegression',\n",
+    "    'Ridge',\n",
+    "    'Lasso',\n",
+    "    'Random Forrest',\n",
+    "    'GBDT'\n",
+    "    'Support Vector Regression',\n",
+    "    'ElasticNet',\n",
+    "    'XgBoost']\n",
+    "#Define the model.\n",
+    "# cv is the cross-validation idea here.\n",
+    "models = [LinearRegression(),\n",
+    "    RidgeCV(alphas=(0.001,0.1,1),cv=3),\n",
+    "    LassoCV(alphas=(0.001,0.1,1),cv=5),\n",
+    "    RandomForestRegressor(n_estimators=10),\n",
+    "    GradientBoostingRegressor(n_estimators=30),\n",
+    "    SVR(),\n",
+    "    ElasticNet(alpha=0.001,max_iter=10000),\n",
+    "    XGBRegressor()]\n",
+    "# Output the R2 scores of all regression models.\n",
+    "#Define the R2 scoring function.\n",
+    "def R2(model,x_train, x_test, y_train, y_test):\n",
+    "    model_fitted = model.fit(x_train,y_train)\n",
+    "    y_pred = model_fitted.predict(x_test)\n",
+    "    score = r2_score(y_test, y_pred)\n",
+    "    return score\n",
+    "#Traverse all models to score.\n",
+    "for name,model in zip(names,models):\n",
+    "    score = R2(model,x_train, x_test, y_train, y_test)\n",
+    "    print(\"{}: {:.6f}, {:.4f}\".format(name,score.mean(),score.std()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "'''\n",
+    "'kernel': kernel function\n",
+    "'C': SVR regularization factor\n",
+    "'gamma': 'rbf', 'poly' and 'sigmoid' kernel function coefficient, which affects the mode\n",
+    "performance\n",
+    "'''\n",
+    "parameters = {\n",
+    "'kernel': ['linear', 'rbf'],\n",
+    "'C': [0.1, 0.5,0.9,1,5],\n",
+    "'gamma': [0.001,0.01,0.1,1]\n",
+    "}\n",
+    "#Use grid search and perform cross validation\n",
+    "model = GridSearchCV(SVR(), param_grid=parameters, cv=3)\n",
+    "model.fit(x_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"Optimal parameter list:\", model.best_params_)\n",
+    "print(\"Optimal model:\", model.best_estimator_)\n",
+    "print(\"Optimal R2 value:\", model.best_score_)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##Perform visualization.\n",
+    "ln_x_test = range(len(x_test))\n",
+    "y_predict = model.predict(x_test)\n",
+    "#Set the canvas.\n",
+    "plt.figure(figsize=(16,8), facecolor='w')\n",
+    "#Draw with a red solid line.\n",
+    "plt.plot (ln_x_test, y_test, 'r-', lw=2, label=u'Value')\n",
+    "#Draw with a green solid line.\n",
+    "plt.plot (ln_x_test, y_predict, 'g-', lw = 3, label=u'Estimated value of the SVR algorithm,\n",
+    "$R^2$=%.3f' % (model.best_score_))\n",
+    "#Display in a diagram.\n",
+    "plt.legend(loc ='upper left')\n",
+    "plt.grid(True)\n",
+    "plt.title(u\"Boston Housing Price Forecast (SVM)\")\n",
+    "plt.xlim(0, 101)\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "E-commerce Website User Group Analysis"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from lxml import html\n",
+    "import requests\n",
+    "import nltk\n",
+    "from nltk.sentiment.vader import SentimentIntensityAnalyzer\n",
+    "import tkinter as tk\n",
+    "from tkinter import ttk\n",
+    "import time\n",
+    "import re\n",
+    "import sys\n",
+    "from reportlab.lib.units import cm\n",
+    "from reportlab.graphics.charts.piecharts import Pie\n",
+    "from reportlab.graphics.shapes import *\n",
+    "from reportlab.graphics import renderPDF\n",
+    "\n",
+    "root = tk.Tk()\n",
+    "gasin = tk.StringVar()\n",
+    "class MainClass:\n",
+    "    def __init__(self):\n",
+    "        global root\n",
+    "        topf = ttk.Frame(root, width=260, height=65, padding=(5,5,5,5))\n",
+    "        bottomf = ttk.Frame(root, width=260, height=65, padding=(5,5,5,5))\n",
+    "        root.grid_rowconfigure(1, weight=1)\n",
+    "        root.grid_columnconfigure(0, weight=1)\n",
+    "        topf.grid(row=0, sticky=\"n\")\n",
+    "        bottomf.grid(row=1, sticky=\"n\")\n",
+    "        label = tk.Label(topf, text=\"Enter Product ID: \")\n",
+    "        label.grid(row=0, column=0, pady=15)\n",
+    "        entry = tk.Entry(topf, textvariable=gasin)\n",
+    "        entry.grid(row=0, column=1)\n",
+    "        root.winfo_toplevel().title(\"Reviewer\")\n",
+    "        root.geometry(\"270x130\")\n",
+    "        root.resizable(0, 0)\n",
+    "        btn = tk.Button(bottomf, text=\"Analyze\", command=self.startAnalyze, bd=4)\n",
+    "        btn.grid(row=0, columnspan=110, pady=20)\n",
+    "        \n",
+    "        root.mainloop()\n",
+    "\n",
+    "    def startAnalyze(self):\n",
+    "        global gasin\n",
+    "        asin  = str(gasin.get())\n",
+    "        root.destroy()\n",
+    "        start_time = time.time()\n",
+    "        u1 = 'https://www.amazon.in/product-reviews/'\n",
+    "        u2 = u1+asin\n",
+    "\n",
+    "        para = '?sortBy=recent&reviewerType=all_reviews'\n",
+    "        u3 = u2+para\n",
+    "        amazon_url = u3\n",
+    "\n",
+    "        user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'\n",
+    "        headers = {'User-Agent': user_agent}\n",
+    "\n",
+    "        try:\n",
+    "            page = requests.get(amazon_url, headers = headers)\n",
+    "        except:\n",
+    "            print(\"Some error has occured!\")\n",
+    "        try:\n",
+    "            parser = html.fromstring(page.content)\n",
+    "        except:\n",
+    "            parser = html.fromstring(page.content)\n",
+    "\n",
+    "        xpath_but = '//*[@id=\"cm_cr-pagination_bar\"]/ul/li[7]/a/text()'\n",
+    "\n",
+    "        xpath_reviews = '//div[@data-hook=\"review\"]'\n",
+    "\n",
+    "        xpath_title   = './/a[@data-hook=\"review-title\"]//text()'\n",
+    "\n",
+    "        xpath_prod_name = '//*[@id=\"cm_cr-product_info\"]/div/div[2]/div/div/div[2]/div[1]/h1/a/text()'\n",
+    "\n",
+    "        xpath_body    = './/span[@data-hook=\"review-body\"]//text()'\n",
+    "        but = parser.xpath(xpath_but)\n",
+    "        reviews = parser.xpath(xpath_reviews)\n",
+    "        if len(but) is not 0:\n",
+    "            r = int(but[0].replace(',', '')) + 1\n",
+    "        else:\n",
+    "            if len(reviews) is not 0:\n",
+    "                r = 2\n",
+    "            else:\n",
+    "                print(\"No review available for this product!\")\n",
+    "                sys.exit()\n",
+    "\n",
+    "        name = parser.xpath(xpath_prod_name)\n",
+    "        try:\n",
+    "            tt = name[0]\n",
+    "        except IndexError:\n",
+    "            raise Exception(\"Invalid Product Id\")\n",
+    "        print(name[0])\n",
+    "        tt = re.sub('[\\\\/:\"*?<>|$]+', '', name[0])\n",
+    "        print(\"Total no of pages.\")\n",
+    "        print(r - 1)\n",
+    "        print(\"Now we can estimate the required time! It depends on your network...\")\n",
+    "        print(\"The counting will go upto the total number of pages...\")\n",
+    "        temp = amazon_url + '&pageNumber='\n",
+    "\n",
+    "        pos = 0\n",
+    "        neg = 0\n",
+    "        sid = SentimentIntensityAnalyzer()\n",
+    "        ind = \"compound\"\n",
+    "        rc = 0\n",
+    "       \n",
+    "        \n",
+    "        for i in range(1, r):\n",
+    "            a_url = temp + str(i)\n",
+    "            print(i)\n",
+    "            try:\n",
+    "                page = requests.get(a_url, headers=headers, timeout=60)\n",
+    "            except:\n",
+    "                page = requests.get(a_url, headers=headers, timeout=120)\n",
+    "            parser = html.fromstring(page.content)\n",
+    "            reviews = parser.xpath(xpath_reviews)\n",
+    "            for review in reviews:\n",
+    "                title = review.xpath(xpath_title)\n",
+    "                body = review.xpath(xpath_body)\n",
+    "                rc += 1\n",
+    "                if len(body) is not 0:\n",
+    "                    d = title[0] + ' '\n",
+    "                    ss = sid.polarity_scores(d + body[0])\n",
+    "                    k = ss[ind]\n",
+    "                    if (k > 0):\n",
+    "                        pos += 1\n",
+    "                    \n",
+    "\n",
+    "        pr = str(format((pos / rc) * 100, '.3f')) + \"%\"\n",
+    "        print(\"Positive: \")\n",
+    "        print(pr)\n",
+    "        print(\"Total reviews:  \")\n",
+    "        print(rc)\n",
+    "        print(\"%s time in seconds\" % (time.time() - start_time))\n",
+    "\n",
+    "        neg = rc - pos\n",
+    "\n",
+    "        if len(tt) > 255:\n",
+    "            tt = tt[:255]\n",
+    "\n",
+    "        d = Drawing(21*cm, 29.7*cm)\n",
+    "        pc = Pie()\n",
+    "        pc.x = 200\n",
+    "        pc.y = 150\n",
+    "        pc.width = 220\n",
+    "        pc.height = 220\n",
+    "        pc.data = [pos, neg]\n",
+    "        pc.labels = ['Positive', 'Negative'] \n",
+    "        pc.slices.strokeWidth = 0.5\n",
+    "        pc.slices[1].popout=6\n",
+    "        \n",
+    "        d.add(pc)\n",
+    "        fon=22\n",
+    "        d.add(String(14,670,'Product Name: '+tt[:42], fontSize=fon))\n",
+    "        count = int(len(tt)/41)-1\n",
+    "        if(len(tt)%41!=0):\n",
+    "            count+=1\n",
+    "        for i in range(1, count+1):\n",
+    "            d.add(String(14,670-i*30, '                        '+tt[(42*i):(42*i+42)], fontSize=fon))\n",
+    "        \n",
+    "        d.add(String(14,640-count*30,'Product Id: '+asin, fontSize=fon, ))\n",
+    "        d.add(String(14,610-count*30,'Total number of reviews: '+str(rc), fontSize=fon))\n",
+    "        d.add(String(14,580-count*30,'Number of Positive Reviews: '+str(pos), fontSize=fon))\n",
+    "        d.add(String(14,550-count*30,'Number of Negative Reviews: '+str(neg), fontSize=fon))\n",
+    "        d.add(String(14,520-count*30,'Rating: '+pr, fontSize=fon))\n",
+    "        renderPDF.drawToFile(d, tt+'.pdf','           Review Report')\n",
+    " \n",
+    "       \n",
+    "if __name__ == '__main__':\n",
+    "\n",
+    "    MainClass()"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
