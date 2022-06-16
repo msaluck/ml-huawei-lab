@@ -1,0 +1,1242 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1 Procedure\n",
+    "1.1.1 Hello world"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print ('Hello World') # Generate \"hello world\".\n",
+    "print (\"Hello World\")# Generate \"hello world\". The output is the same when single and double quotation marks are carried in input."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.2 Data Type: Number "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(True+False)# The output is 1. By default, True indicates 1, and False indicates 0.\n",
+    "print(True or False) # If True is displayed, enter \"or\" or perform the OR operation.\n",
+    "print(5//2) # The output is 2, and // is the rounding operator.\n",
+    "print(5%2)# The output is 1, and % is the modulo operator.\n",
+    "print(3**2)# The output is 9, and ** indicates the power operation.\n",
+    "print(5+1.6)# The output is 6.6. By default, the sum of numbers of different precisions is the number of the highest precision type."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.3 Data Type: String"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Step 1 Basic operations on strings:\n",
+    "S = 'python' # Assign value \"python\" to variable S.\n",
+    "len(obj): #Return the object length.\n",
+    "print(len(S)) # Output: 6\n",
+    "print(S[0], S[1], S[-1]) # The output is pyn. Elements are obtained by index.\n",
+    "print (S+' 1', S*2) # The output is python1 pythonpython, which indicates mergence and duplication."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Step 2 Immutability of strings:\n",
+    "S = 'python' # Assign value \"python\" to variable S.\n",
+    "S[0] = 'Z' # The program is abnormal.\n",
+    "S1 ='Z'+S[1:] # New string Zython is generated and assigned to S1.\n",
+    "print(\"S:%s, S1:%s\"%(S, S1))# Output: S:python, S1:Zython"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Step 3Common operations on strings:\n",
+    "S = \"python\" # Assign value \"python\" to variable S.\n",
+    "print(S.split('h')) # str.split(str=\"\", num=-1): The string is split by separator. If the num parameter has a value, divide the string into num+1 substrings. The value -1 indicates that all strings are split.\n",
+    "# The output is ['pyt','on']. The string is split by h.\n",
+    "print(S.replace('py','PY'))# str.replace(old, new[, max]): A string generated after the old string is replaced with the new string is returned. If the third parameter max is specified, the number of times that the old string is replaced with the new string cannot exceed the value of max.\n",
+    "# In the string, py is replaced with PY.\n",
+    "print(S.upper()) # str.upper(): Return the value after lowercase letters are converted to uppercase letters.\n",
+    "# PYTHON\n",
+    "print ('PYTHON'.lower())# str.lower(): Return the value after uppercase letters are converted to lowercase letters.\n",
+    "# The output is python because all uppercase letters\n",
+    "line= 'aa,bb,ccc,dd\\n' # \\n is a newline character.\n",
+    "print (' '.join([' life ',' is ',' short '])) # str.join(sequence): sequence indicates a sequence to be joined. In the output, the new stringgenerated after the elements in the specified character join sequence is returned. \n",
+    "# The output is life is short. The join function is used for concatenating strings.\n",
+    "hw12= '%s %s %d' % ('hello', 'world', 12) # Format the string.\n",
+    "print(hw12) # Output: hello world 12"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.4 Data Type: List"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "animals = ['cat', 'dog', 'monkey']\n",
+    "# list.append(obj): Add a new object to the end of the list.\n",
+    "animals.append ('fish') # Append an element.\n",
+    "print(animals) # Output: ['cat', 'dog', 'monkey', 'fish']\n",
+    "# list.remove(obj): Remove the first match for a value in the list. \n",
+    "animals.remove ('fish') # Delete element fish.\n",
+    "print(animals) # Output: ['cat', 'dog', 'monkey']\n",
+    "# list.insert(index, obj): Insert a specified object to a specified position in the list. The index indicates the position. \n",
+    "animals.insert (1, 'fish') # Insert element fish at subscript 1. \n",
+    "print(animals) # Output: ['cat', 'fish', 'dog', 'monkey']\n",
+    "# list.pop([index=-1]): Remove the element (the last element by default) corresponding to the subscript in the list. The index indicates the subscript.\n",
+    "animals.pop(1) # Delete the element whose subscript is 1.\n",
+    "print(animals) # Output: ['cat', 'dog', 'monkey']\n",
+    "# Traverse and obtain the elements and indexes.\n",
+    "# enumerate(sequence): Return an index sequence consisting of a data object that can be traversed and list the data and subscripts. This function is usually used in the for loop.\n",
+    "for i in enumerate(animals):\n",
+    "print(i) # Index consisting of the element subscript and element\n",
+    "Output: (0, cat) \n",
+    "(1, dog)\n",
+    "(2, monkey)\n",
+    "# List derivation.\n",
+    "squares = [x*2 for x in animals] # Generate a list of elements that comply with rules in batches.\n",
+    "print(squares) #['catcat ', 'dogdog ', 'monkeymonkey ']\n",
+    "list1 = [12,45,32,55] \n",
+    "# list.sort(cmp=None, key=None, reverse=False): The cmp parameter is an optional parameter. If this parameter is specified, the method uses this parameter is used for sorting. Key is an element used for comparison. reverse indicates the sorting rule, and False indicates the ascending order.\n",
+    "list1.sort() # Sort the list. \n",
+    "print(list1) # Output: [12,32,45,55]\n",
+    "# list.reverse(): Element in the reverse list.\n",
+    "list1.reverse() # Reverse the list.\n",
+    "print(list1) # Output: [55,45,32,12]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.5 Data Type: Tuple"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "T=(1,2,3) # Create a tuple.\n",
+    "print(T+(4,5)) #Tuples are combined. The output is (1, 2, 3, 4, 5).\n",
+    "t=(42,) # A tuple with only one element, which is different from a number.\n",
+    "tuple1 = (12,45,32,55,[1,0,3]) # Create a tuple. \n",
+    "tuple1 = (12,45,32,55,[1,0,3]) # Create a tuple. \n",
+    "tuple1[0] = \"good\" # The program is abnormal, and the tuple is unchangeable. \n",
+    "tuple1[4][0] = 2 # Elements that can be changed in a tuple are changeable.\n",
+    "print(tuple1) # (12,45,32,55,[2,0,3])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.6 Data Type: Dictionary"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Three value assignment operations on dictionaries.\n",
+    "x = {'food':'Spam','quantity':4,'color':'pink'}\n",
+    "X =dict(food='Spam',quantity=4, color='pink')\n",
+    "x = dict([(\"food\", \"Spam\"),(\"quantity\", \"4\"),(\"color\",\"pink\")])\n",
+    "# dict.copy(): Copy data. \n",
+    "d =x.copy()\n",
+    "d['color'] = 'red'\n",
+    "print(x) # {'food':'Spam','quantity':4,'color':'pink'}\n",
+    "print(d) # {'food':'Spam','quantity':4,'color':'red'} \n",
+    "# Element access.\n",
+    "print (d ['name']) # Obtain the error information.\n",
+    "print(d.get('name')) # Output: None \n",
+    "print(d.get('name','The key value does not exist.')) # Output: The key value does not exist.\n",
+    "print(d.keys()) # Output: dict_keys(['food', 'quantity', 'color'])\n",
+    "print(d.values()) # Output: dict_values(['Spam', 4, 'red']) \n",
+    "print(d.items())\n",
+    "# Output: dict_items([('food', 'Spam'), ('quantity', 4), ('color', 'red')]) \n",
+    "d.clear() # Clear all data in the dictionary.\n",
+    "print(d) # Output: {}\n",
+    "del(d) # Delete the dictionary.\n",
+    "print(d) # The program is abnormal, and a message is displayed,indicating that d is not defined."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "1.1.7 Data Type: Set"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sample_set = {'Prince', 'Techs'}\n",
+    "print('Data' in sample_set) # The output is False. in is used to check whether an element exists in the set. \n",
+    "# set.add(obj): Add an element to a set. If the element to be added already exists in the set, no operation is performed.\n",
+    "sample_set.add('Data') # Add element Data to the set.\n",
+    "print(sample_set) # Output: {'Prince', 'Techs', 'Data'}\n",
+    "print(len(sample_set)) # Output: 3\n",
+    "# set.remove(obj): Remove a specified element from a set.\n",
+    "sample_set.remove('Data') # Delete element Data.\n",
+    "print(sample_set) # {'Prince', 'Techs'} \n",
+    "list2 = [1,3,1,5,3]\n",
+    "print(list(set(list2))) # The output is [1,3,5]. The uniqueness of the set elements is used to deduplicate the list\n",
+    "sample_set = frozenset(sample_set)# Invariable set."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "2.1 Procedure\n",
+    "2.1.1 Deep Copy and Shallow Copy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Deep Copy and Shallow Copy \n",
+    "import copy\n",
+    "Dict1 = {'name':'lee', 'age':89, 'num':[1,2,8]} # Create a dictionary\n",
+    "Dict_copy = Dict1.copy() # Shallow cop\n",
+    "Dict_dcopy = copy.deepcopy(Dict1) # Deep copy. \n",
+    "Dict1['num'][1] = 6 # Change the value of the nested list in the original data.\n",
+    "print('Dict1:'+str(Dict1)+\"\\n\",' Dict_copy:'+ str(Dict_copy)+\"\\n\",' Dict_dcopy:'+ str(Dict_dcopy))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "2.1.2 if Statement"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Determine the entered score.\n",
+    "# input(): Receive input data.\n",
+    "score = input(\"Please enter your score.\") # The input function receives input, which is a string. \n",
+    "score = float(score) # Convert the score to a number. \n",
+    "# try: except Exception: ... is a Python statement used to capture exceptions. If an error occurs in the statement in try, the statement in except is executed.\n",
+    "try:\n",
+    "    if 100>=score>=90: # Check whether the entered value is greater than the score of a level.\n",
+    "        print(\"Excellent\") # Generate the level when conditions are met.\n",
+    "    elif 90 > score >= 80:\n",
+    "        print(\"Good\")\n",
+    "    elif 80>score>0:\n",
+    "        print(\"Medium\")\n",
+    "    else:\n",
+    "        print(\"Bad\")\n",
+    "except Exception:\n",
+    "    print(\"Enter a correct score.\") "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "2.1.3 Loop Statement"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# while loop\n",
+    "i = 0 # Create the variable i.\n",
+    "while i<9: # Set a condition for the loop. \n",
+    " i+=1 # The value of i increases by 1 in each loop.\n",
+    "if i == 3: # Check whether the conditions are met. \n",
+    "        print(\"Exit this loop.\")\n",
+    "        continue # Execute continue to exit the current loop.\n",
+    "if i == 5:\n",
+    "        print(\"Exit the current big loop.\")\n",
+    "        break # Exit the current big loop.\n",
+    "print(i)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "3.1 Procedure\n",
+    "3.1.1 Function Customization"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def fibs(num): # Position parameter. \n",
+    "    result = [0,1]# Create a list to store the sequence value. \n",
+    "    for i in range(2,num): # Cycle num-2 times.\n",
+    "        a = result[i-1] + result[i-2]\n",
+    "        result.append(a) # Append the value to the list. \n",
+    "\n",
+    "    return result # Return the list.\n",
+    "fibs(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def hello(greeting='hello',name='world'): # Default parameters. \n",
+    "     print('%s, %s!' % (greeting, name)) # Format the output.\n",
+    "hello() # hello，world Default parameter\n",
+    "hello('Greetings') # Greetings，world Position parameter.\n",
+    "hello ('Greetings', 'universe') # Greetings, universe Position parameter.\n",
+    "hello (name= 'Gumby') # hello, Gumby Keyword parameter."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "3.1.2 Object Orientation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class Dog(): \n",
+    "\"\"\"A simple attempt to simulate a dog\"\"\"\n",
+    "def __init__ (self,name,age): \n",
+    "    \"\"\"Initialize the name and age attributes.\"\"\"    \n",
+    "    self.name = name \n",
+    "    self.age = age \n",
+    "def sit(self):    \n",
+    "    \"\"\"Simulate a dog sitting when ordered.\"\"\"  \n",
+    "    print(self.name.title()+\"is now sitting\")\n",
+    "def roll_over(self):    \n",
+    "    \"\"\"Simulate a dog rolling over when ordered.\"\"\"    \n",
+    "    print(self.name.title()+\"rolled over!\") \n",
+    "dog = Dog (\"Husky\",2)  \n",
+    "dog.sit()  \n",
+    "dog.roll_over()      "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class Employee:  \n",
+    "    'Base class of all employees'   \n",
+    "    empCount = 0\n",
+    "    def __init__(self, name, salary): \n",
+    "        self.name = name\n",
+    "        self.salary = salary\n",
+    "        Employee.empCount += 1\n",
+    "    def displayCount(self):\n",
+    "         print(\"Name : \", self.name, \", Salary: \", self.salary)\n",
+    "# Create the first object of the Employee class.     \n",
+    "emp1 = Employee(\"Zara\", 2000)    \n",
+    "# Create the second object of the Employee class.     \n",
+    "emp2 = Employee(\"Manni\", 5000)     \n",
+    "emp1.displayEmployee()   \n",
+    "emp2.displayEmployee()    \n",
+    "print(\"Total Employee %d\" % Employee.empCount)    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class Parent: # Define the parent class.\n",
+    "    parentAttr = 100\n",
+    "    def __init__(self):\n",
+    "        print(\"Invoke the parent class to construct a function.\") \n",
+    "    def parentMethod(self):\n",
+    "        print('Invoke a parent class method.')\n",
+    "    def setAttr(self, attr):\n",
+    "        Parent.parentAttr = attr\n",
+    "    def getAttr(self):\n",
+    "        print(\"Parent attribute:\", Parent.parentAttr)\n",
+    "class Child(Parent):  # Define a child class.\n",
+    "    def __init__(self): \n",
+    "        print(\"Invoke a child class to construct a method.\") \n",
+    "    def childMethod(self): \n",
+    "        print('Invoke a child method.')\n",
+    "c = Child() # Instantiate a child class.\n",
+    "c.childMethod() # Invoke the method of a child class.\n",
+    "c.parentMethod() # Invoke the method of a parent class.\n",
+    "c.setAttr(200) # Invoke the method of the parent class again to set the attribute value.\n",
+    "c.getAttr() # Invoke the method of the parent class again to obtain the attribute value. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class JustCounter:\n",
+    "    __secretCount = 0 # Private variable.\n",
+    "    publicCount = 0 # Public variable.\n",
+    "    def count(self):\n",
+    "        self.__secretCount += 1 \n",
+    "        self.publicCount += 1\n",
+    "        print(self.__secretCount) \n",
+    "counter = JustCounter() \n",
+    "counter.count()\n",
+    "counter.count()\n",
+    "print(counter.publicCount) \n",
+    "print(counter.__secretCount) # An error is reported,\n",
+    "#indicating that the instance cannot access private variables."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "4.1 Procedure\n",
+    "4.1.1 Standard Library Usage"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import sys\n",
+    "for i in range(100):\n",
+    "    print(i)\n",
+    "    if i ==5:\n",
+    "        sys.exit(0)\n",
+    "sys.path \n",
+    "print(sys.argv[1])\n",
+    "python test.py hello"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "# os.getpid() Obtain the current process ID.\n",
+    "print(\"ID of the current process:\", os.getpid())\n",
+    "# os.getppid(): Obtain the ID of the current parent process.\n",
+    "print(\" ID of the current parent process:\", os.getppid())\n",
+    "# os.getcwd(): Obtain the current path.\n",
+    "cwd = os.getcwd()\n",
+    "print(\" The current path is:\",cwd)\n",
+    "# os.chdir(path): Change the current working directory.\n",
+    "os.chdir(\"C:\\\\\") \n",
+    "print(\"The modified path is:\", os.getcwd())\n",
+    "# os.listdir(): Return all files in the directory.\n",
+    "print(\"Files in the current directory:\", os.listdir(cwd))\n",
+    "# os.walk(): Export all files in the current path.\n",
+    "for root, dirs, files in os.walk(cwd, topdown=False):\n",
+    "    for name in files: \n",
+    "        print(os.path.join(root, name))\n",
+    "    for name in dirs:\n",
+    "        print(os.path.join(root, name))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "# os.getpid() Obtain the current process ID.\n",
+    "print(\"The absolute path of text.txt is:\",os.path.abspath(\"text.txt\")) # The text.txt file is a file in the\n",
+    "# current folder. (In the previous experiment, the current path is changed to C:\\, and you need to switch \n",
+    "# back to the original path.)\n",
+    "# os.path.exists(path): If the file exists, True is returned; if the file does not exist, False is returned. \n",
+    "print(\"Whether the text.txt file exists: \",os.path.exists(\"text.txt\"))\n",
+    "# os.path.isdir(path): Check whether the path is a folder.\n",
+    "print(\"Whether text.txt is a folder:\",os.path.isdir(\"text.txt\")) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import time\n",
+    "# time.time(): Obtain the current timestamp.\n",
+    "time_now = time.time()\n",
+    "print(\"Timestamp:\",time_now) \n",
+    "# time.localtime(): Obtain the time tuple.\n",
+    "localtime = time.localtime(time_now) \n",
+    "print(\"The local time is:\", localtime) \n",
+    "# time.asctime(): Obtain formatted time. \n",
+    "localtime = time.asctime(localtime)\n",
+    "print(\"The local time is:\", localtime) \n",
+    "#time.strftime(format[, t]): Receive the time tuple and return the local time expressed in a readabl\n",
+    "# string, in the format specified by the format parameter.\n",
+    "print(time.strftime(\"%Y-%m-%d %H:%M:%S\", time.localtime()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "5.1 Database Programming\n",
+    "5.1.1 Installing the Database"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "#please change to MySQL format Frm python\n",
+    "# Set the default character set of the MySQL client.\n",
+    "default-character-set=utf8\n",
+    "[mysqld]\n",
+    "# Set the port 3306.\n",
+    "port = 3306\n",
+    "# Set the MySQL installation directory. Replace ## with the installation directory. \n",
+    "# Set the directory for storing the MySQL database data.\n",
+    "# datadir=##\n",
+    "# Maximum number of connections allowed.\n",
+    "max_connections=20\n",
+    "# The default character set used by the server is the 8-bit latin1 character set.\n",
+    "character-set-server=utf8 \n",
+    "# Default storage engine used when a new table is created.\n",
+    "default-storage-engine=INNODB "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Open the CLI as the administrator, \n",
+    "# switch to the decompressed folder, and go to the bin directory. \n",
+    "mysqld --initialize -console\n",
+    "# Run the following command to install the MySQL: \n",
+    "mysqld install\n",
+    "# Start the MySQL database. \n",
+    "net start mysql\n",
+    "# Log in to the MySQL database.\n",
+    "mysql -uroot -p\n",
+    "# Change the password. \n",
+    "set password for User name@localhost = password('New password') "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "5.2 Creating a database"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Create database my_database. \n",
+    "create database my_database; \n",
+    "# Switch the database.\n",
+    "use my_database; "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "5.3 Database Programming"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Create database my_database. \n",
+    "import pymysql \n",
+    "# Connect to the database. \n",
+    "db = pymysql.connect(\"localhost\", \"root\", \"mysql\", \"my_database\", charset='utf8' ) \n",
+    "# localhost: local connection. You can also change it to the IP address of the database\n",
+    "# root: MySQL database account; mysql: database password.\n",
+    "# my_database: name of the database to be connected.\n",
+    "# Use the cursor() method to obtain the operation cursor.\n",
+    "cursor = db.cursor()\n",
+    "# Execute the SQL statement using the execute method.\n",
+    "cursor.execute(\"SELECT VERSION()\")\n",
+    "# Use the fetchone() method to obtain a data record.\n",
+    "data = cursor.fetchone() \n",
+    "print(\"Database version : %s \" % data)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Create database my_database. \n",
+    "import pymysql \n",
+    "# Connect to the database. \n",
+    "db = pymysql.connect(\"localhost\", \"root\", \"mysql\", \"my_database\", charset='utf8' ) \n",
+    "# Use the cursor() method to obtain the operation cursor\n",
+    "cursor = db.cursor()\n",
+    "# SQL statement for creating a data table.\n",
+    "sql = \"\"\"CREATE TABLE my_table (\n",
+    "    id int,\n",
+    "     name varchar(50))\"\"\"\n",
+    "# Run the following commands:\n",
+    "cursor.execute(sql) \n",
+    "# Close the database connection.\n",
+    "db.close()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Create database my_database. \n",
+    "import pymysql \n",
+    "# Connect to the database. \n",
+    "db = pymysql.connect(\"localhost\", \"root\", \"mysql\", \"my_database\", charset='utf8' ) \n",
+    "# Use the cursor() method to obtain the operation cursor.\n",
+    "cursor = db.cursor()\n",
+    "# Execute the SQL INSERT statement.\n",
+    "sql = \"\"\"INSERT INTO my_table(id,\n",
+    "           name)\n",
+    "           Values (1,'Ricky Edward')\"\"\"# You only need to modify the SQL statement to be executed to\n",
+    "# delete or modify the data.\n",
+    "try: \n",
+    "    # Execute the SQL statement.\n",
+    "    cursor.execute(sql)\n",
+    "    # Submit data to the database for execution.\n",
+    "    db.commit()\n",
+    "except:\n",
+    "    # Rollback upon an error.\n",
+    "    db.rollback()\n",
+    "# Close the database connection.\n",
+    "db.close()    \n",
+    "#   View the result in the database. \n",
+    "select * from my_table; "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "6.1 Procedure\n",
+    "6.1.1 I/O Operations"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "f = open(\"text.txt\", 'w') # Open the text.txt file. If the file does not exist, a new file will be\n",
+    "# created.\n",
+    "Str = input(\"Please enter the content to be written:\")\n",
+    "f.write(Str)\n",
+    "f.close() "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "f = open(\"text.txt\", 'w') # Open the text.txt file. If the file does not exist, a new file will be\n",
+    "# created.\n",
+    "print(f.read(6)) # Read six characters and move the cursor six characters backward.\n",
+    "print(f.read()) # Read from the current position of the cursor to the end.\n",
+    "f.close() "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the with statement to write file data.\n",
+    "with open(\"text1.txt\", 'w') as f:\n",
+    "    f.write(\"Python file operation\") \n",
+    "# Use the with statement to read the file content.with open(\"text1.txt\", 'r') as f: \n",
+    "with open(\"text1.txt\", 'r') as f: \n",
+    "    print(f.read())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the with statement to write file data.\n",
+    "import os\n",
+    "os.rename(\"text.txt\",\"text0.txt\") # Rename the file.\n",
+    "os.remove(\"text1.txt\") # Delete the file. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "7.1 Introduction\n",
+    "7.1.1 Regular Expressions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Function syntax: \n",
+    "re.match(pattern, string, flags=0)\n",
+    "# Example: \n",
+    "import re\n",
+    "print(re.match('www', 'www.huawei.com').span())  # Match at the start position.\n",
+    "print(re.match('com', 'www.huawei.com')) # Not match at the start position."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Function syntax: \n",
+    "re.search(pattern, string, flags=0)\n",
+    "# Example: \n",
+    "line = \"Cats are smarter than dogs\"\n",
+    "searchObj = re.search( r'(.*) are (.*?) .*', line, re.M|re.I)\n",
+    "if searchObj:\n",
+    "    print(\"searchObj.group() : \", searchObj.group())\n",
+    "    print(\"searchObj.group(1) : \", searchObj.group(1))\n",
+    "    print(\"searchObj.group(2) : \", searchObj.group(2))\n",
+    "else:\n",
+    "    print(\"Nothing found!!\" )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Function syntax: \n",
+    "re.sub(pattern, repl, string, count=0, flags=0)\n",
+    "# Example: \n",
+    "import re \n",
+    "phone = \"2019-0101-000 # This is a phone number.\" \n",
+    "# Delete the Python comment in the string.\n",
+    "num = re.sub(r'#.*$', \"\", phone)\n",
+    "print(\"The phone number is: \", num)\n",
+    "# Delete the hyphens from the phone number.\n",
+    "num = re.sub(r'\\D', \"\", phone) \n",
+    "print(\"The phone number is: \", num)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Function syntax: \n",
+    "re.compile(pattern[, flags])\n",
+    "# Example: \n",
+    "import re \n",
+    "pattern = re.compile(r'\\d+') # At least one digit is matched.  \n",
+    "n = pattern.match('one12twothree34four') # The header is not found.\n",
+    "print(n)\n",
+    "m = pattern.search('one12twothree34four') # Match from the position of 'e'. No match is found.\n",
+    "print(m)\n",
+    "print(m.group())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Function syntax: \n",
+    "re.split(pattern, string[, maxsplit=0, flags=0])\n",
+    "# Example: \n",
+    "import re \n",
+    "s = re.split('\\W+', 'www.huawei.com')\n",
+    "print(s)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "8.1 Procedure\n",
+    "8.1.1 Iterator"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the isinstance() method to determine whether an object can be iterated.\n",
+    "from collections import Iterable # Iterable object.\n",
+    "print(isinstance([], Iterable))\n",
+    "print(isinstance('abc', Iterable))\n",
+    "print(isinstance(100, Iterable))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Determine an iterator.\n",
+    "from collections import Iterator # Iterator.\n",
+    "print(isinstance([], Iterator))\n",
+    "print(isinstance(iter([]), Iterator))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "8.1.2 Generators"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Step 1Create a generator through list derivation.\n",
+    "G = ( x*2 for x in range(5))\n",
+    "print(type(G))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a generator through a yield keyword.\n",
+    "def fib(n):\n",
+    "    current = 0\n",
+    "    num1, num2 = 0, 1\n",
+    "    while current < n:\n",
+    "        num = num1\n",
+    "        num1, num2 = num2, num1+num2\n",
+    "        current += 1\n",
+    "        yield num\n",
+    "return 'done'    \n",
+    "g=fib(5)\n",
+    "while True:\n",
+    "    try: \n",
+    "        x = next(g)\n",
+    "        print(\"value:%d\"%x)\n",
+    "    except StopIteration as e:\n",
+    "    print(\"Generator return value:%s\"%e.value)\n",
+    "    break"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the send method.\n",
+    "def gen():\n",
+    "    i = 0\n",
+    "    while i<5:\n",
+    "    temp = yield i \n",
+    "    print(temp)\n",
+    "    i+=1\n",
+    "f = gen()\n",
+    "next(f)\n",
+    "#---------------#\n",
+    "f.send('haha')\n",
+    "#---------------#\n",
+    "#---------------#"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "8.1.3 Decorators"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Construct a decorator\n",
+    "import time\n",
+    "def func(f):\n",
+    "    def inner(*args, **kwargs):\n",
+    "        start_time = time.time()\n",
+    "        f(*args, **kwargs)\n",
+    "        end_time = time.time() \n",
+    "        print('Consumed time:%s second' % (end_time - start_time))\n",
+    "    return inner"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the decoration function.\n",
+    "@func\n",
+    "def test():\n",
+    "    time.sleep(2)\n",
+    "test()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "9. Treasury Management System"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Create a database and data table.\n",
+    "# Create a database.\n",
+    "create database money;\n",
+    "# Create a data table.\n",
+    "# CREATE TABLE user(\n",
+    "username varchar(30) PRIMARY KEY,\n",
+    "pwd VARCHAR(100) NOT NULL,\n",
+    "start_time DATETIME NOT NULL,\n",
+    "end_time DATETIME NOT NULL,\n",
+    "balance FLOAT NOT NULL\n",
+    ")ENGINE=InnoDB DEFAULT CHARSET=utf8;\n",
+    "# Insert data.\n",
+    "INSERT INTO user (username, pwd, start_time, end_time, balance)\n",
+    "VALUES ('admin','123456','2019.04.23', '2019.04.23',100.0);\n",
+    "INSERT INTO user (username, pwd, start_time, end_time, balance)\n",
+    "VALUES ('root','admin','2019.01.01', '2019.02.02',100.0); "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Import the required library and define the operation dictionary.\n",
+    "import time\n",
+    "import sys\n",
+    "import pymysql\n",
+    "import getpass\n",
+    "action_dict = {1:\"deposit\", 2: \"withdrawal\", 3:\"transfer\", 4:\"change password\", 5:'Exit'}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Define the method of connecting to the database. The SQL statement is the database operation \n",
+    "# statement to be executed each time. \n",
+    "def con_mysql(sql):\n",
+    "try:\n",
+    "    db = pymysql.connect(\"localhost\", \"root\", \"mysql\", \"money\", charset='utf8' )\n",
+    "    # Use the cursor() method to obtain the operation cursor. \n",
+    "    cursor = db.cursor()\n",
+    "    # Execute the SQL statement using the execute method.\n",
+    "    cursor.execute(sql)\n",
+    "    results = cursor.fetchone()# Query a data record.\n",
+    "    db.commit() # Submit the data to the database.\n",
+    "except Exception as e:\n",
+    "    db.rollback()\n",
+    "    print(\"System error\")\n",
+    "    sys.exit()\n",
+    "db.close() # Close the database. \n",
+    "return results\n",
+    "# Test method:\n",
+    "sql = \"select * from user\" \n",
+    "sql = \"select * from user\" "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Define a user class. \n",
+    "class Account(object):\n",
+    "    self.money = money # Account balance.\n",
+    "    self.username = username # User name.\n",
+    "# Last login time.\n",
+    "    self.start_time = time.strftime(\"%Y-%m-%d %H:%M:%S\", time.localtime())\n",
+    "    self.number = number\n",
+    "# Deposit.\n",
+    "def save(self):\n",
+    "    self.money += self.number\n",
+    "    print(\"Saved CNY %f\"%(self.number))\n",
+    "# Withdrawal.\n",
+    "def take(self):\n",
+    "    if self.number > self.money:\n",
+    "        print(\"Insufficient balance\")\n",
+    "        return 0\n",
+    "    else:\n",
+    "    self.money -= self.number\n",
+    "    print (\" Withdraw CNY %f\"%(self.number))\n",
+    "    return 1 \n",
+    "# Change the password.\n",
+    "def update(self):\n",
+    "    pwd = getpass.getpass(\"Enter a new password：\")\n",
+    "    sql = \"update user set pwd=%s where username=%s\"%(pwd, self.username)\n",
+    "    return sql\n",
+    "# Transfer.\n",
+    "def transfer(self):\n",
+    "    user = input(\"Please enter the transferee.\")\n",
+    "    if self.number > self.money:\n",
+    "        print(\"Insufficient balance\")\n",
+    "        return\n",
+    "    else:\n",
+    "        sql = \"select username from user where username='%s'\"%(user)\n",
+    "        result = con_mysql(sql)\n",
+    "        if result == None: \n",
+    "            print (\"The transferee does not exist.\") \n",
+    "            self.number=0\n",
+    "        else:\n",
+    "            return user\n",
+    "# Perform the selected operation.\n",
+    "def implement(self, action):\n",
+    "    if action == 5:\n",
+    "        sys.exit()\n",
+    "    elif action == 1:\n",
+    "        try:\n",
+    "            self.number = float (input(\"Please enter the deposit amount:\"))\n",
+    "        except Exception as e:\n",
+    "            print(\"Enter a correct amount.\")\n",
+    "        self.save()\n",
+    "    elif action == 2:\n",
+    "        try: \n",
+    "            self.number = float (input(\"Please enter the amount to be withdrawn:\"))\n",
+    "        except Exception as e:\n",
+    "            print(\"Enter a correct amount.\")\n",
+    "        if self.take():\n",
+    "            sql = \"update user set balance=%f where\n",
+    "username=%s\"%(self.number,self.username)\n",
+    "            con_mysql(sql)\n",
+    "    elif action == 3:\n",
+    "        try:\n",
+    "            self.number = float (input(\"Please enter the transfer amount.\"))\n",
+    "        except Exception as e:\n",
+    "            print(\"Enter a correct amount.\") \n",
+    "        User = self.transfer()\n",
+    "        if User: \n",
+    "            sql = \"update user set balance=%f where username=%s\"%(self.number,User) \n",
+    "            con_mysql(sql)\n",
+    "  else:   \n",
+    "        self.update()\n",
+    "# Generate the credential after the operation.\n",
+    "    def voucher(self,end_time, action):\n",
+    "        str_action = \"\"\"user:%s \\n operation:%s\\n Operation amount: %s\\n Login time: \n",
+    "                    %s\\n End time: %s\"\"\"%(self.username, action_dict[action], self.number, \n",
+    "self.start_time, end_time)\n",
+    "    with open(\"%s.txt\"%(self.username), 'w') as f: \n",
+    "    try: \n",
+    "        f.write(str_action)\n",
+    "        except Exception as e:\n",
+    "            print(\"The credential fails to be generated. Please contact the administrator.)\n",
+    "        print (\"Generation succeeded. Keep it safely.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "def welcome(): \n",
+    "    print(' *'*15)\n",
+    "    print(\" %s%30s\"%(\"*\",\"*\"))\n",
+    "    print(\" %s Welcome to the Treasury Management System %5s\"%(\"*\",\"*\"))\n",
+    "    print(\" %s%30s\"%(\"*\",\"*\"))\n",
+    "    print(' *'*15)\n",
+    "    try: \n",
+    "        action = input(\"Please select the operation: 1. Deposit 2. Withdraw 3. Transfer 4. Change\n",
+    "Password 5. Exit:\")\n",
+    "        action = int(action)\n",
+    "    except Exception as e: \n",
+    "        print(\"warn: Please enter a correct operation command.\")\n",
+    "        return -1\n",
+    "    if action not in action_dict: \n",
+    "    print(\"warn: Please perform a correct operation.\")\n",
+    "    return -1\n",
+    "    return action\n",
+    "# Test the welcome method:\n",
+    "action = welcome() \n",
+    "action"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "vscode": {
+     "languageId": "sql"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Define the system startup function.\n",
+    "def run():\n",
+    "    action = welcome()\n",
+    "    user_account.implement(action)\n",
+    "    end_time = time.strftime(\"%Y-%m-%d %H:%M:%S\", time.localtime())\n",
+    "    sql = \"\"\" \n",
+    "    update user set balance=%f,start_time='%s',end_time='%s' where username='%s'\n",
+    "    \"\"\"%(user_account.money, user_account.start_time,end_time,user_account.username)\n",
+    "    con_mysql(sql)\n",
+    "    user_account.voucher(end_time, action)"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

@@ -1,0 +1,20 @@
+sns.distplot(tuple(y), kde=False, fit=st.norm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

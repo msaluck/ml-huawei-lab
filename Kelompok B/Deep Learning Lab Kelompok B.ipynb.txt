@@ -1,0 +1,1067 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "TensorFlow 2 Basics"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "const_a = tf.constant([[1, 2, 3, 4]],shape=[2,2], dtype=tf.float32)\n",
+    "# Create a 2x2 matrix with values 1, 2, 3, and 4.\n",
+    "const_a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#View common attributes.\n",
+    "print(\"value of the constant const_a:\", const_a.numpy()) \n",
+    "print(\"data type of the constant const_a:\", const_a.dtype.)\n",
+    "print(\"shape of the constant const_a:\", const_a.shape)\n",
+    "print(\"name of the device that is to generate the constant const_a:\", const_a.device)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#View common attributes.\n",
+    "zeros_b = tf.zeros(shape=[2, 3], dtype=tf.int32) # Create a 2x3 matrix with all values being 0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#View common attributes.\n",
+    "zeros_like_c = tf.zeros_like(const_a)\n",
+    "#View generated data.\n",
+    "zeros_like_c.numpy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fill_d = tf.fill([3,3], 8) # Create a 2x3 matrix with all values being 8.\n",
+    "#View data\n",
+    "fill_d.numpy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "random_e = tf.random.normal([5,5],mean=0,stddev=1.0, seed = 1)\n",
+    "#View the created data.\n",
+    "random_e.numpy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a list. \n",
+    "list_f = [1,2,3,4,5,6] \n",
+    "#View the data type.\n",
+    "type(list_f)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tensor_f = tf.convert_to_tensor(list_f, dtype=tf.float32)\n",
+    "tensor_f"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a variable. Only the initial value needs to be provided. \n",
+    "var_1 = tf.Variable(tf.ones([2,3]))\n",
+    "var_1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Read the variable value. \n",
+    "print(\"Value of the variable var_1:\",var_1.read_value())\n",
+    "Assign a variable value.\n",
+    "var_value_1=[[1,2,3],[4,5,6]]\n",
+    "var_1.assign(var_value_1)\n",
+    "print(\"Value of the variable var_1after the assignment:\",var_1.read_value())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Variable addition \n",
+    "var_1.assign_add(tf.ones([2,3])) \n",
+    "var_1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Variable addition \n",
+    "var_1.assign_add(tf.ones([2,3])) \n",
+    "var_1\n",
+    "#Create a 4-dimensional tensor. The tensor contains four images. The size of each image is \n",
+    "100 x 100 x 3\n",
+    "tensor_h = tf.random.normal([4,100,100,3]) \n",
+    "tensor_h"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Extract the first image.\n",
+    "tensor_h[0,:,:,:]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Extract one slice at an interval of two images.\n",
+    "tensor_h[::2,...] "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Slice data from the last element. \n",
+    "tensor_h[::-1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tf.constant()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Indexing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Obtain the pixel in the position [20,40] in the second channel of the first image. \n",
+    "tensor_h[0][19][39][1] "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Extract the first, second, and fourth images from tensor_h([4,100,100,3]). \n",
+    "indices = [0,1,3]\n",
+    "tf.gather(tensor_h,axis=0,indices=indices,batch_dims=1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Extract the pixel in [1,1] from the first dimension of the first image and the pixel in [2,2] from \n",
+    "# the first dimension of the second image in tensot_h([4,100,100,3]).\n",
+    "indices = [[0,1,1,0],[1,2,2,0]]\n",
+    "tf.gather_nd(tensor_h,indices=indices)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    ".\n",
+    "const_d_1 = tf.constant([[1, 2, 3, 4]],shape=[2,2], dtype=tf.float32)\n",
+    "#Three common methods for displaying a dimension: \n",
+    "print(const_d_1.shape) \n",
+    "print(const_d_1.get_shape())\n",
+    "print(tf.shape(const_d_1))#The output is a tensor. The value of the tensor indicates the size of\n",
+    "# the tensor dimension to be displayed."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "reshape_1 = tf.constant([[1,2,3],[4,5,6]]) \n",
+    "print(reshape_1) \n",
+    "tf.reshape(reshape_1, (3,2)) "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Tensor Dimension Modification"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "const_d_1 = tf.constant([[1, 2, 3, 4]],shape=[2,2], dtype=tf.float32)\n",
+    "#Three common methods for displaying a dimension: \n",
+    "print(const_d_1.shape)\n",
+    "print(const_d_1.get_shape())\n",
+    "print(tf.shape(const_d_1))#The output is a tensor. The value of the tensor indicates the size of\n",
+    "# the tensor dimension to be displayed. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "reshape_1 = tf.constant([[1,2,3],[4,5,6]])  \n",
+    "print(reshape_1)\n",
+    "tf.reshape(reshape_1, (3,2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Generate a 100 x 100 x 3 tensor to represent a 100 x 100 three-channel color image. \n",
+    "expand_sample_1 = tf.random.normal([100,100,3], seed=1)\n",
+    "print(\"size of the original data:\",expand_sample_1.shape)\n",
+    "print(\"add a dimension before the first dimension (axis= 0):\n",
+    "\",tf.expand_dims(expand_sample_1, axis=0).shape)\n",
+    "print(\"add a dimension before the second dimension (axis= 1):\n",
+    "\",tf.expand_dims(expand_sample_1, axis=1).shape) \n",
+    "print(\"add a dimension after the last dimension (axis= -1): \n",
+    "\",tf.expand_dims(expand_sample_1, axis=-1).shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Generate a 100 x 100 x 3 tensor to represent a 100 x 100 three-channel color image.\n",
+    "squeeze_sample_1 = tf.random.normal([1,100,100,3])\n",
+    "print(\"size of the original data:\",squeeze_sample_1.shape)\n",
+    "squeezed_sample_1 = tf.squeeze(expand_sample_1)\n",
+    "print(\"data size after dimension squeezing:\",squeezed_sample_1.shape) "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Tensor Splitting"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "split_sample_1 = tf.random.normal([10,100,100,3])\n",
+    "print(\"size of the original data:\",split_sample_1.shape)\n",
+    "splited_sample_1 = tf.split(split_sample_1, num_or_size_splits=5,axis=0)\n",
+    "print(\"size of the split data when m_or_size_splitsis set to 10: \",np.shape(splited_sample_1))\n",
+    "splited_sample_2 = tf.split(split_sample_1, num_or_size_splits=[3,5,2],axis=0)\n",
+    "print(\"sizes of the split data when num_or_size_splitsis set to [3,5,2]:\",\n",
+    "    np.shape(splited_sample_2[0]),\n",
+    "    np.shape(splited_sample_2[1]),\n",
+    "    np.shape(splited_sample_2[2]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sort_sample_1 = tf.random.shuffle(tf.range(10)) \n",
+    "print(\"input tensor:\",sort_sample_1.numpy()) \n",
+    "sorted_sample_1 = tf.sort(sort_sample_1, direction=\"ASCENDING\")\n",
+    "print(\"tensor sorted in ascending order:\",sorted_sample_1.numpy())\n",
+    "sorted_sample_2 = tf.argsort(sort_sample_1,direction=\"ASCENDING\")\n",
+    "print(\"indexes of elements in ascending order:\",sorted_sample_2.numpy())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sort_sample_1 = tf.random.shuffle(tf.range(10))\n",
+    "print(\"input tensor:\",sort_sample_1.numpy())\n",
+    "sorted_sample_1 = tf.sort(sort_sample_1, direction=\"ASCENDING\")\n",
+    "print(\"tensor sorted in ascending order:\",sorted_sample_1.numpy())\n",
+    "sorted_sample_2 = tf.argsort(sort_sample_1,direction=\"ASCENDING\")\n",
+    "print(\"indexes of elements in ascending order:\",sorted_sample_2.numpy()) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "x = tf.ones((2, 2), dtype=tf.dtypes.float32)\n",
+    "y = tf.constant([[1, 2],\n",
+    "                        [3, 4]], dtype=tf.dtypes.float32)\n",
+    "z = tf.matmul(x, y)\n",
+    "print(z)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import TensorFlow.compat.v1 as tf\n",
+    "tf.disable_eager_execution()\n",
+    "#Create a graph and define it as a computational graph.\n",
+    "a = tf.ones((2, 2), dtype=tf.dtypes.float32)\n",
+    "b = tf.constant([[1, 2],\n",
+    "                    [3, 4]], dtype=tf.dtypes.float32)\n",
+    "c = tf.matmul(a, b)\n",
+    "#Enable the drawing function, and perform the multiplication operation to obtain data. \n",
+    "with tf.Session() as sess:\n",
+    "    print(sess.run(c))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import TensorFlow as tf\n",
+    "thre_1 = tf.random.uniform([], 0, 1) \n",
+    "x = tf.reshape(tf.range(0, 4), [2, 2])\n",
+    "print(thre_1) \n",
+    "if thre_1.numpy() > 0.5:\n",
+    "    y = tf.matmul(x, x)\n",
+    "else:\n",
+    "    y = tf.add(x, x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "@tf.function\n",
+    "def simple_nn_layer(w,x,b): \n",
+    "    print(b)\n",
+    "    return tf.nn.relu(tf.matmul(w, x)+b)\n",
+    "w = tf.random.uniform((3, 3)) \n",
+    "x = tf.random.uniform((3, 3))     \n",
+    "b = tf.constant(0.5, dtype='float32')    \n",
+    "simple_nn_layer(w,x,b)    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Use the timeitmodule to measure the execution time of a small code segment.\n",
+    "import timeit\n",
+    "#Create a convolutional layer.\n",
+    "CNN_cell = tf.keras.layers.Conv2D(filters=100,kernel_size=2,strides=(1,1)) \n",
+    "#Use @tf.functionto convert the operation into a graph.\n",
+    "@tf.function\n",
+    "def CNN_fn(image):\n",
+    "    return CNN_cell(image)\n",
+    "image = tf.zeros([100, 200, 200, 3])\n",
+    "#Compare the execution time of the two modes.\n",
+    "CNN_cell(image)\n",
+    "CNN_fn(image) \n",
+    "#Call timeit.timeitto measure the time required for executing the code 10 times.\n",
+    "print(\"time required for performing the computation of one convolutional neural network (CNN)\n",
+    "layer in eager execution mode:\", timeit.timeit(lambda: CNN_cell(image), number=10))\n",
+    "print(\"time required for performing the computation of one CNN layer in graph mode:\", \n",
+    "timeit.timeit(lambda: CNN_fn(image), number=10))    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Transpose"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Input the tensor to be transposed, and call tf.transpose\n",
+    "trans_sample_1 = tf.constant([1,2,3,4,5,6],shape=[2,3])\n",
+    "print(\"size of the original data:\",trans_sample_1.shape)\n",
+    "transposed_sample_1 = tf.transpose(trans_sample_1)\n",
+    "print(\"size of transposed data:\",transposed_sample_1.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Generate an $ x 100 x 200 x 3 tensor to represent four 100 x 200 three-channel color images. \n",
+    "trans_sample_2 = tf.random.normal([4,100,200,3])\n",
+    "print(\"size of the original data:\",trans_sample_2.shape)\n",
+    "#Exchange the length and width for the four images: The original permvalue is [0,1,2,3], and \n",
+    "the new permvalue is [0,2,1,3]. \n",
+    "transposed_sample_2 = tf.transpose(trans_sample_2,[0,2,1,3])\n",
+    "print(\"size of transposed data:\",transposed_sample_2.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "broadcast_sample_1 = tf.constant([1,2,3,4,5,6])\n",
+    "print(\"original data:\",broadcast_sample_1.numpy())\n",
+    "broadcasted_sample_1 = tf.broadcast_to(broadcast_sample_1,shape=[4,6])\n",
+    "print(\"broadcasted data:\",broadcasted_sample_1.numpy())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#During the operation, if two arrays have different shapes, TensorFlow automatically triggers the broadcast mechanism as NumPy does.\n",
+    "a = tf.constant([[ 0, 0, 0],\n",
+    "                [10,10,10],\n",
+    "                [20,20,20],\n",
+    "                [30,30,30]])\n",
+    "b = tf.constant([1,2,3])\n",
+    "print(a + b)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#During the operation, if two arrays have different shapes, TensorFlow automatically triggers the broadcast mechanism as NumPy does.\n",
+    "a = tf.constant([[3, 5], [4, 8]])\n",
+    "b = tf.constant([[1, 6], [2, 9]])\n",
+    "print(tf.add(a, b))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#During the operation, if two arrays have different shapes, TensorFlow automatically triggers the broadcast mechanism as NumPy does.\n",
+    "tf.matmul(a,b)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "argmax_sample_1 = tf.constant([[1,3,2],[2,5,8],[7,5,9]])\n",
+    "print(\"input tensor:\",argmax_sample_1.numpy())\n",
+    "max_sample_1 = tf.argmax(argmax_sample_1, axis=0)\n",
+    "max_sample_2 = tf.argmax(argmax_sample_1, axis=1)\n",
+    "print(\"locate the maximum value by column:\",max_sample_1.numpy())\n",
+    "print(\"locate the maximum value by row:\",max_sample_2.numpy()) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "reduce_sample_1 = tf.constant([1,2,3,4,5,6],shape=[2,3]) \n",
+    "print(\"original data\",reduce_sample_1.numpy())\n",
+    "print(\"calculate the sum of all elements in the tensor (axis= None):\n",
+    "\",tf.reduce_sum(reduce_sample_1,axis=None).numpy()) \n",
+    "print(\"calculate the sum of elements in each column by column (axis= 0): \n",
+    "\",tf.reduce_sum(reduce_sample_1,axis=0).numpy()) \n",
+    "print(\"calculate the sum of elements in each column by row (axis= 1):\n",
+    "\",tf.reduce_sum(reduce_sample_1,axis=1).numpy())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "concat_sample_1 = tf.random.normal([4,100,100,3])\n",
+    "concat_sample_2 = tf.random.normal([40,100,100,3])\n",
+    "print(\"sizes of the original data:\",concat_sample_1.shape,concat_sample_2.shape)\n",
+    "concated_sample_1 = tf.concat([concat_sample_1,concat_sample_2],axis=0)\n",
+    "print(\"size of the concatenated data:\",concated_sample_1.shape) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "stack_sample_1 = tf.random.normal([100,100,3])\n",
+    "stack_sample_2 = tf.random.normal([100,100,3])\n",
+    "print(\"sizes of the original data: \",stack_sample_1.shape, stack_sample_2.shape.)\n",
+    "#Dimensions increase after the concatenation. If axisis set to 0, a dimension is added before the first dimension.\n",
+    "stacked_sample_1 = tf.stack([stack_sample_1, stack_sample_2],axis=0)\n",
+    "print(\"size of the concatenated data:\",stacked_sample_1.shape)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Split data based on the first dimension and output the split data in a list.\n",
+    "tf.unstack(stacked_sample_1,axis=0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "2 Common Modules of TensorFlow 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Model Building"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import TensorFlow.keras.layers as layers \n",
+    "model = tf.keras.Sequential() \n",
+    "model.add(layers.Dense(32, activation='relu'))\n",
+    "model.add(layers.Dense(32, activation='relu'))\n",
+    "model.add(layers.Dense(10, activation='softmax'))\n",
+    "#Use the output of the previous layer as the input of the next layer. \n",
+    "x = tf.keras.Input(shape=(32,))\n",
+    "h1 = layers.Dense(32, activation='relu')(x)\n",
+    "h2 = layers.Dense(32, activation='relu')(h1\n",
+    "y = layers.Dense(10, activation='softmax')(h2)\n",
+    "model_sample_2 = tf.keras.models.Model(x, y)\n",
+    "#Print model information.\n",
+    "model_sample_2.summary() "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a fully connected layer that contains 32 neurons. Set the activation function to sigmoid.\n",
+    "#The activationparameter can be set to a function name string, for example, sigmoidor a function object, for example, tf.sigmoid.\n",
+    "layers.Dense(32, activation='sigmoid')\n",
+    "layers.Dense(32, activation=tf.sigmoid)\n",
+    "#Set kernel_initializer. \n",
+    "layers.Dense(32, kernel_initializer=tf.keras.initializers.he_normal)\n",
+    "#Set kernel_regularizerto L2 regularization. \n",
+    "layers.Dense(32, kernel_regularizer=tf.keras.regularizers.l2(0.01))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "layers.Conv2D(64,[1,1],2,padding='same',activation=\"relu\") "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "layers.MaxPooling2D(pool_size=(2,2),strides=(2,1))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "inputs = tf.keras.Input(shape=(3, 1))\n",
+    "lstm = layers.LSTM(1, return_sequences=True)(inputs)\n",
+    "model_lstm_1 = tf.keras.models.Model(inputs=inputs, outputs=lstm)\n",
+    "inputs = tf.keras.Input(shape=(3, 1)) \n",
+    "lstm = layers.LSTM(1, return_sequences=False)(inputs)\n",
+    "model_lstm_2 = tf.keras.models.Model(inputs=inputs, outputs=lstm)\n",
+    "#Sequences t1, t2, and t3 \n",
+    "data = [[[0.1]\n",
+    "    [0.2],\n",
+    "    [0.3]]]\n",
+    "print(data)\n",
+    "print(\"output when return_sequencesis set to True\",model_lstm_1.predict(data))\n",
+    "print(\"output when return_sequencesis set to False\",model_lstm_2.predict(data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#LSTM\n",
+    "tf.keras.layers.LSTM(16, return_sequences=True)\n",
+    "#LSTMCell\n",
+    "x = tf.keras.Input((None, 3))\n",
+    "y = layers.RNN(layers.LSTMCell(16))(x)\n",
+    "model_lstm_3= tf.keras.Model(x, y)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Training and Evaluation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = tf.keras.Sequential()\n",
+    "model.add(layers.Dense(10, activation='softmax'))\n",
+    "#Determine the optimizer (optimizer), loss function (loss), and model evaluation method\n",
+    "(metrics).\n",
+    "model.compile(optimizer=tf.keras.optimizers.Adam(0.001),\n",
+    "            loss=tf.keras.losses.categorical_crossentropy,\n",
+    "            metrics=[tf.keras.metrics.categorical_accuracy])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "train_x = np.random.random((1000, 36))\n",
+    "train_y = np.random.random((1000, 10))\n",
+    "val_x = np.random.random((200, 36))\n",
+    "val_y = np.random.random((200, 10))\n",
+    "model.fit(train_x, train_y, epochs=10, batch_size=100,\n",
+    "validation_data=(val_x, val_y)) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset = tf.data.Dataset.from_tensor_slices((train_x, train_y))\n",
+    "dataset = dataset.batch(32)\n",
+    "dataset = dataset.repeat()\n",
+    "val_dataset = tf.data.Dataset.from_tensor_slices((val_x, val_y)) \n",
+    "val_dataset = val_dataset.batch(32) \n",
+    "val_dataset = val_dataset.repeat()\n",
+    "model.fit(dataset, epochs=10, steps_per_epoch=30        \n",
+    "            validation_data=val_dataset, validation_steps=3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Set hyperparameters. \n",
+    "Epochs = 10\n",
+    "#Define a function for dynamically setting the learning rate.\n",
+    "def lr_Scheduler(epoch):\n",
+    "    if epoch > 0.9 * Epochs\n",
+    "        lr = 0.0001\n",
+    "    elif epoch > 0.5 * Epochs:\n",
+    "        lr = 0.001\n",
+    "    elif epoch > 0.25 * Epochs: \n",
+    "        lr = 0.01\n",
+    "    else:\n",
+    "        lr = 0.1\n",
+    "    print(lr)\n",
+    "    return lr\n",
+    "callbacks = [ \n",
+    "    #Early stopping:\n",
+    "    tf.keras.callbacks.EarlyStopping(\n",
+    "        #Metric for determining whether the model performance has no further improvement monitor='val_loss',improvement\n",
+    "        min_delta=1e-2,\n",
+    "        #Number of epochs in which the model performance has no further improvement patience=2),\n",
+    "    #Periodically save models.\n",
+    "    tf.keras.callbacks.ModelCheckpoint( \n",
+    "        #Model path\n",
+    "        filepath='testmodel_{epoch}.h5',\n",
+    "        #Whether to save the optimal model.\n",
+    "        save_best_only=True, \n",
+    "        #Monitored metric \n",
+    "        monitor='val_loss'), \n",
+    "    #Dynamically change the learning rate.\n",
+    "    tf.keras.callbacks.LearningRateScheduler(lr_Scheduler),\n",
+    "    #Use TensorBoard.\n",
+    "    tf.keras.callbacks.TensorBoard(log_dir='./logs')\n",
+    "]\n",
+    "model.fit(train_x, train_y, batch_size=16, epochs=Epochs, \n",
+    "    callbacks=callbacks, validation_data=(val_x, val_y))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Model evaluation \n",
+    "test_x = np.random.random((1000, 36))\n",
+    "test_y = np.random.random((1000, 10))\n",
+    "model.evaluate(test_x, test_y, batch_size=32)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Model prediction\n",
+    "pre_x = np.random.random((10, 36))\n",
+    "result = model.predict(test_x,)\n",
+    "print(result)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "#Save models.\n",
+    "model.save('./model/the_save_model.h5')\n",
+    "#Import models.\n",
+    "new_model = tf.keras.models.load_model('./model/the_save_model.h5')\n",
+    "new_prediction = new_model.predict(test_x)\n",
+    "#np.testing.assert_allclose: determines whether the similarity between two objects exceeds the\n",
+    "# specified tolerance. If yes, the system displays an exception.\n",
+    "#atol: specified tolerance\n",
+    "np.testing.assert_allclose(result, new_prediction, atol=1e-6) # Prediction results are the same."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.save_weights('./model/model_weights')\n",
+    "model.save_weights('./model/model_weights.h5') \n",
+    "#Load the weights\n",
+    "model.load_weights('./model/model_weights')\n",
+    "model.load_weights('./model/model_weights.h5')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "3 Image Recognition"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "import numpy as np\n",
+    "import os\n",
+    "import PIL\n",
+    "import tensorflow as tf\n",
+    "\n",
+    "from tensorflow import keras\n",
+    "from tensorflow.keras import layers\n",
+    "from tensorflow.keras.models import Sequential\n",
+    "\n",
+    "flower_photo/\n",
+    "  daisy/\n",
+    "  dandelion/\n",
+    "  roses/\n",
+    "  sunflowers/\n",
+    "  tulips/\n",
+    "\n",
+    "import pathlib\n",
+    "dataset_url = \"https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz\"\n",
+    "data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url, untar=True)\n",
+    "data_dir = pathlib.Path(data_dir)\n",
+    "\n",
+    "image_count = len(list(data_dir.glob('*/*.jpg')))\n",
+    "print(image_count)\n",
+    "\n",
+    "roses = list(data_dir.glob('roses/*'))\n",
+    "PIL.Image.open(str(roses[0]))\n",
+    "PIL.Image.open(str(roses[1]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Convert a 28 x 28 image into a 784 x 1 vector.\n",
+    "x_train = x_train_raw.reshape(60000, 784)\n",
+    "x_test = x_test_raw.reshape(10000, 784)\n",
+    "#Normalize image pixel values. \n",
+    "x_train = x_train.astype('float32')/255 \n",
+    "x_test = x_test.astype('float32')/255"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Create a  neural network (DNN) model that consists of four fully connected layers and two RELU activation functions.\n",
+    "model = keras.Sequential([ \n",
+    "    layers.Dense(784, activation='relu', input_dim = 784),\n",
+    "    layers.Dense(100, activation='relu'),\n",
+    "    layers.Dense(100, activation='relu'),\n",
+    "    layers.Dense(100, activation='relu'),\n",
+    "layers.Dense(num_classes, activation='softmax')])\n",
+    "model.summary() "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Optimizer = optimizers.Adam(0.001)\n",
+    "model.compile(loss=keras.losses.categorical_crossentropy, \n",
+    "                optimizer=Optimizer,\n",
+    "                metrics=['accuracy']) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Optimizer = optimizers.Adam(0.001)\n",
+    "model.compile(loss=keras.losses.categorical_crossentropy, \n",
+    "                optimizer=Optimizer,\n",
+    "                metrics=['accuracy']) \n",
+    "# Training the NN Model\n",
+    "#Fit the training data to the model by using the fit method.\n",
+    "model.fit(x_train, y_train, \n",
+    "            batch_size=128,\n",
+    "            epochs=10,\n",
+    "            verbose=1) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "score = model.evaluate(x_test, y_test, verbose=0) \n",
+    "print('Test loss:', score[0]) \n",
+    "print('Test accuracy:', score[1])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "CNN Construction"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.save('./mnist_model/final_DNN_model.h5') "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import tensorflow as tf\n",
+    "from tensorflow import keras\n",
+    "import numpy as np\n",
+    "model=keras.Sequential() #Create a network sequence. \n",
+    "##Add the first convolutional layer and pooling layer.\n",
+    "model.add(keras.layers.Conv2D(filters=32,kernel_size = 5,strides = (1,1),\n",
+    "                                padding = 'same',activation = tf.nn.relu,input_shape =\n",
+    "(28,28,1)))\n",
+    "model.add(keras.layers.MaxPool2D(pool_size=(2,2), strides = (2,2), padding = 'valid'))\n",
+    "##Add the second convolutional layer and pooling layer.\n",
+    "model.add(keras.layers.Conv2D(filters=64,kernel_size = 3,strides = (1,1),padding =\n",
+    "'same',activation = tf.nn.relu))\n",
+    "model.add(keras.layers.MaxPool2D(pool_size=(2,2), strides = (2,2), padding = 'valid'))\n",
+    "##Add a dropout layer to reduce overfitting.\n",
+    "model.add(keras.layers.Dropout(0.25))\n",
+    "model.add(keras.layers.Flatten())\n",
+    "##Add two fully connected layers.\n",
+    "model.add(keras.layers.Dense(units=128,activation = tf.nn.relu)) \n",
+    "model.add(keras.layers.Dropout(0.5)) \n",
+    "model.add(keras.layers.Dense(units=10,activation = tf.nn.softmax))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Expand data dimensions to adapt to the CNN model. \n",
+    "X_train=x_train.reshape(60000,28,28,1)\n",
+    "X_test=x_test.reshape(10000,28,28,1)\n",
+    "model.compile(optimizer=tf.train.AdamOptimizer(),loss=\"categorical_crossentropy\",metrics=['accuracy'])\n",
+    "model.fit(x=X_train,y=y_train,epochs=5,batch_size=128)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_loss,test_acc=model.evaluate(x=X_test,y=mnist.test.labels)\n",
+    "print(\"Test Accuracy %.2f\"%test_acc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from tensorflow.keras.models import load_model \n",
+    "new_model = load_model('./mnist_model/final_CNN_model.h5')\n",
+    "new_model.summary()"
+   ]
+  }
+ ],
+ "metadata": {
+  "language_info": {
+   "name": "python"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
